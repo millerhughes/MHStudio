@@ -1,0 +1,180 @@
+@import "tailwindcss";
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-panel: var(--panel);
+  --color-ink: var(--ink);
+  --color-ink-bg: var(--ink-bg);
+  --color-muted: var(--muted);
+  --color-primary: var(--primary);
+  --color-primary-deep: var(--primary-deep);
+  --color-border: var(--border);
+
+  /* VectorFlowAI brand flow-field ramp */
+  --color-vf-deep: var(--vf-deep);
+  --color-vf-core: var(--vf-core);
+  --color-vf-glow: var(--vf-glow);
+  --color-vf-spark: var(--vf-spark);
+
+  --font-sans: var(--font-bricolage);
+
+  --ease-out-quint: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
+
+  --z-base: 0;
+  --z-grid: 1;
+  --z-marks: 5;
+  --z-nav: 40;
+  --z-modal: 70;
+}
+
+:root {
+  /* The proof mark — off-white drafting surface, deep teal-cast ink, forest-teal
+     accent. Colour system replicated from VectorFlowAI (forest-teal, locked D-024). */
+  --bg: oklch(0.975 0.004 145);
+  --panel: oklch(0.948 0.006 152);
+  --ink: oklch(0.11 0.015 150);
+  --ink-bg: oklch(0.25 0.07 172);
+  --muted: oklch(0.46 0.01 152);
+  --primary: oklch(0.4 0.09 167);
+  --primary-deep: oklch(0.33 0.08 167);
+  --border: oklch(0.885 0.008 152);
+
+  /* VectorFlowAI brand flow-field ramp (deep forest -> forest-teal -> bright -> pale tip) */
+  --vf-deep: oklch(0.25 0.07 172);
+  --vf-core: oklch(0.4 0.09 167);
+  --vf-glow: oklch(0.6 0.1 162);
+  --vf-spark: oklch(0.8 0.06 155);
+}
+
+@layer base {
+  * {
+    border-color: var(--border);
+  }
+  html {
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+    font-weight: 430;
+    line-height: 1.6;
+  }
+  h1,
+  h2,
+  h3 {
+    font-weight: 760;
+    letter-spacing: -0.025em;
+    line-height: 1.02;
+    text-wrap: balance;
+  }
+  h4,
+  h5 {
+    font-weight: 680;
+    letter-spacing: -0.015em;
+    text-wrap: balance;
+  }
+  p {
+    text-wrap: pretty;
+  }
+  ::selection {
+    background: var(--primary);
+    color: white;
+  }
+  :focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+}
+
+@layer components {
+  /* Registration / measurement label — a real proofing mark, used sparingly */
+  .mark-label {
+    font-weight: 600;
+    font-size: 0.72rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  /* Faint blueprint grid, drawn as a background; structural, not decorative */
+  .blueprint-grid {
+    background-image:
+      linear-gradient(to right, var(--border) 1px, transparent 1px),
+      linear-gradient(to bottom, var(--border) 1px, transparent 1px);
+    background-size: clamp(48px, 7vw, 88px) clamp(48px, 7vw, 88px);
+    mask-image: radial-gradient(120% 90% at 50% 0%, black 30%, transparent 75%);
+    -webkit-mask-image: radial-gradient(120% 90% at 50% 0%, black 30%, transparent 75%);
+  }
+
+  /* Iridescent teal foil — a slow light-sweep for premium CTAs (Demo C).
+     Sits as an overlay behind the label; opacity is set per-variant so the
+     deep-teal base still carries white-text contrast. */
+  .irid-fill {
+    background-image: linear-gradient(
+      135deg,
+      #17524a 0%,
+      #2e9b8e 22%,
+      #8dd6cc 40%,
+      #e4f6f4 52%,
+      #8dd6cc 64%,
+      #2e9b8e 78%,
+      #17524a 100%
+    );
+    background-size: 300% 300%;
+    animation: irid-sweep 6s ease-in-out infinite;
+  }
+}
+
+/* Reveal: content is visible by default; JS only enhances the entrance. */
+[data-reveal] {
+  opacity: 1;
+}
+.js [data-reveal] {
+  opacity: 0;
+  transform: translateY(18px);
+  transition:
+    opacity 0.7s var(--ease-out-quint),
+    transform 0.7s var(--ease-out-quint);
+  transition-delay: var(--reveal-delay, 0ms);
+}
+.js [data-reveal].is-in {
+  opacity: 1;
+  transform: none;
+}
+
+@keyframes draw-tick {
+  from {
+    stroke-dashoffset: var(--tick-len, 40);
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes irid-sweep {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .js [data-reveal] {
+    opacity: 1;
+    transform: none;
+    transition: opacity 0.2s linear;
+  }
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}
